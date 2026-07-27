@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+uploads/*
+!uploads/.gitkeep
+*.log
+.git/
+.gitignore
+README.md
+.DS_Store
+Thumbs.db

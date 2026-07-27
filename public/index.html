@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Birthday Wish SMS Scheduler | Text.lk Sri Lanka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Mobile-First Responsive Design System */
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    
+    html, body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background-color: #080c14;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Container Utilities */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 0.85rem;
+      width: 100%;
+    }
+
+    /* Glassmorphism & Panels */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.1rem;
+      padding: 1rem;
+    }
+    
+    .glass-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.85rem;
+      padding: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 { font-weight: 700; color: #ffffff; line-height: 1.25; }
+    .text-pink { color: #ec4899; }
+    .text-purple { color: #c084fc; }
+    .text-sky { color: #38bdf8; }
+    .text-emerald { color: #34d399; }
+    .text-amber { color: #fbbf24; }
+    .text-muted { color: #94a3b8; font-size: 0.8rem; }
+
+    /* Touch-Optimized Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1rem;
+      min-height: 42px;
+      border-radius: 0.75rem;
+      font-size: 0.825rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      width: 100%;
+    }
+    @media (min-width: 640px) {
+      .btn { width: auto; }
+    }
+
+    .btn-pink { background: linear-gradient(135deg, #ec4899, #d946ef); color: white; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
+    .btn-emerald { background: linear-gradient(135deg, #059669, #10b981); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+    .btn-sky { background: #0284c7; color: white; }
+    .btn-secondary { background: rgba(30, 41, 59, 0.8); color: #f1f5f9; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .badge-pink { background: rgba(236, 72, 153, 0.15); color: #f472b6; border-color: rgba(236, 72, 153, 0.3); }
+    .badge-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
+    .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
+    .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.3); }
+
+    /* Form Controls */
+    input[type="text"], input[type="password"], input[type="time"], input[type="date"], select, textarea {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      min-height: 42px;
+      background: #030712;
+      border: 1px solid #1e293b;
+      border-radius: 0.75rem;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #ec4899; box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.25); }
+
+    /* Token Chips */
+    .token-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.7rem;
+      min-height: 36px;
+      border-radius: 0.65rem;
+      font-family: monospace;
+      font-size: 0.775rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .token-chip:active { transform: scale(0.94); }
+
+    /* Header Styling */
+    header {
+      background: rgba(3, 7, 18, 0.95);
+      border-bottom: 1px solid #1e293b;
+      padding: 0.65rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    /* ALL 5 TABS VISIBLE MOBILE GRID LAYOUT */
+    .tab-bar-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.4rem;
+      padding: 0.4rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1e293b;
+      border-radius: 1rem;
+    }
+    
+    @media (min-width: 640px) {
+      .tab-bar-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    .tab-btn {
+      padding: 0.55rem 0.65rem;
+      min-height: 38px;
+      border-radius: 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid border: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+    
+    @media (min-width: 640px) {
+      .tab-btn { flex: 1; min-width: 140px; }
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    }
+
+    /* Span 2 cols for 5th button on 2-col mobile grid */
+    .tab-btn-full-mobile {
+      grid-column: span 2;
+    }
+    @media (min-width: 640px) {
+      .tab-btn-full-mobile { grid-column: span 1; }
+    }
+
+    /* Grids */
+    .grid-4 { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    
+    @media (min-width: 500px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .grid-4 { grid-template-columns: repeat(4, 1fr); }
+      .grid-3 { grid-template-columns: 2fr 1fr; }
+    }
+
+    /* Mobile Responsive Card Table */
+    .table-container { width: 100%; overflow-x: auto; border-radius: 0.75rem; border: 1px solid #1e293b; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem; }
+    th { padding: 0.65rem 0.75rem; background: #030712; color: #94a3b8; font-weight: 600; border-bottom: 1px solid #1e293b; white-space: nowrap; }
+    td { padding: 0.65rem 0.75rem; border-bottom: 1px solid rgba(30, 41, 59, 0.5); white-space: nowrap; }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.85rem;
+    }
+    .modal-content {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.1rem;
+      padding: 1.1rem;
+      max-width: 440px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+      
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <div style="font-size: 1.35rem; background: rgba(236, 72, 153, 0.15); padding: 0.25rem 0.45rem; border-radius: 0.65rem; border: 1px solid rgba(236, 72, 153, 0.3);">🎂</div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+            <h2 style="font-size: 1rem;">Regnis Wish SMS</h2>
+            <span class="badge badge-pink" style="font-size: 0.6rem;">Text.lk</span>
+          </div>
+          <p class="text-muted" style="font-size: 0.7rem;">Automated Birthday Wishing & Scheduler</p>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+        <div class="badge badge-purple">Contacts: <strong id="headerContactsCount" style="color: white; margin-left: 0.2rem;">0</strong></div>
+        <div class="badge badge-purple">Time: <strong id="headerSendTime" style="color: #c084fc; margin-left: 0.2rem;">09:00</strong></div>
+        <div id="modeBadge" class="badge badge-amber">Simulation Mode</div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Responsive Mobile 2-Row Wrapped Navigation Bar (ALL 5 TABS VISIBLE AT A GLANCE) -->
+  <div class="container" style="margin-top: 0.75rem;">
+    <div class="tab-bar-container">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active">
+        📊 <span>Overview</span>
+      </button>
+      <button onclick="switchTab('excel')" id="tab-excel" class="tab-btn">
+        📁 <span>Excel & Contacts</span>
+      </button>
+      <button onclick="switchTab('template')" id="tab-template" class="tab-btn">
+        ✨ <span>Template Editor</span>
+      </button>
+      <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn">
+        ⏰ <span>Schedule Queue</span>
+      </button>
+      <button onclick="switchTab('api')" id="tab-api" class="tab-btn tab-btn-full-mobile">
+        ⚙️ <span>Gateway Settings</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main View Panels -->
+  <main class="container" style="margin-top: 0.85rem; margin-bottom: 2rem; flex: 1;">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <div id="view-dashboard" class="view-panel" style="display: flex; flex-direction: column; gap: 0.85rem;">
+      
+      <!-- Hero Banner -->
+      <div class="glass-panel" style="background: linear-gradient(135deg, #0f172a, #1e1b4b); display: flex; flex-direction: column; gap: 0.85rem;">
+        <div>
+          <span class="badge badge-pink" style="margin-bottom: 0.35rem;">✨ Text.lk Sri Lanka SMS Gateway</span>
+          <h2 style="font-size: 1.15rem; margin-bottom: 0.25rem;">Automate Birthday Wishes for Your Staff</h2>
+          <p class="text-muted" style="line-height: 1.35; font-size: 0.775rem;">
+            Download template, upload birthdays, customize wishes using <span class="text-pink font-mono">&lt;&lt;Name&gt;&gt;</span> tokens, and set daily dispatch time.
+          </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <a href="/api/template/download" download class="btn btn-emerald">📥 Download Excel Template (.xlsx)</a>
+          <button onclick="switchTab('excel')" class="btn btn-secondary">Upload Excel Data →</button>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid-4">
+        <div class="glass-card">
+          <p class="text-muted">Total Uploaded Contacts</p>
+          <h3 id="statTotalContacts" style="font-size: 1.35rem; margin-top: 0.15rem;">0</h3>
+          <span style="font-size: 0.65rem; color: #64748b;">In database</span>
+        </div>
+        <div class="glass-card">
+          <p class="text-muted">Today's Birthdays</p>
+          <h3 id="statTodayBirthdays" class="text-pink" style="font-size: 1.35rem; margin-top: 0.15rem;">0</h3>
+          <span style="font-size: 0.65rem; color: #64748b;">Celebrating today</span>
+        </div>
+        <div class="glass-card">
+          <p class="text-muted">Scheduled Queue</p>
+          <h3 id="statScheduledCount" class="text-purple" style="font-size: 1.35rem; margin-top: 0.15rem;">0</h3>
+          <span style="font-size: 0.65rem; color: #64748b;">Pending dispatches</span>
+        </div>
+        <div class="glass-card">
+          <p class="text-muted">Delivered Wishes</p>
+          <h3 id="statSentCount" class="text-emerald" style="font-size: 1.35rem; margin-top: 0.15rem;">0</h3>
+          <span style="font-size: 0.65rem; color: #64748b;">Dispatched log</span>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid-3">
+        <div class="glass-panel">
+          <h3 style="margin-bottom: 0.65rem; font-size: 0.95rem;">🎂 Today's Birthday Celebrants</h3>
+          <div id="todayBirthdaysList" style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <p class="text-muted" style="text-align: center; padding: 1.25rem;">No birthdays recorded for today</p>
+          </div>
+        </div>
+
+        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <h3 style="font-size: 0.95rem;">📲 Send Instant Test SMS</h3>
+          <div>
+            <label class="text-muted" style="display: block; margin-bottom: 0.2rem; font-size: 0.75rem;">Phone Number (947XXXXXXXX)</label>
+            <input type="text" id="quickTestPhone" placeholder="e.g. 0771234567" />
+          </div>
+          <button onclick="sendQuickTestSMS()" class="btn btn-sky">Dispatch Test SMS</button>
+          <div id="quickTestResult" class="hidden" style="padding: 0.6rem; border-radius: 0.65rem; font-size: 0.775rem;"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. EXCEL VIEW -->
+    <div id="view-excel" class="view-panel hidden" style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div>
+          <h3 style="font-size: 1rem;">Excel Data Import & Download</h3>
+          <p class="text-muted">Download template, fill names & birthdays, and upload file below.</p>
+        </div>
+        <a href="/api/template/download" download class="btn btn-emerald">📥 Download Excel Template (.xlsx)</a>
+      </div>
+
+      <!-- Drop zone with touch tap support -->
+      <div onclick="document.getElementById('excelFileInput').click()" style="border: 2px dashed #334155; border-radius: 1.1rem; padding: 1.5rem 0.85rem; text-align: center; cursor: pointer; background: rgba(3, 7, 18, 0.5);">
+        <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="uploadExcelFile(this.files[0])" class="hidden" />
+        <div style="font-size: 1.85rem; margin-bottom: 0.25rem;">📊</div>
+        <h3 style="font-size: 0.95rem; margin-bottom: 0.2rem;">Tap or Drag Excel Template Here</h3>
+        <p class="text-muted" style="margin-bottom: 0.65rem; font-size: 0.75rem;">Supports .xlsx, .xls, .csv files</p>
+        <span class="btn btn-secondary" style="display: inline-flex; width: auto; font-size: 0.75rem; min-height: 36px;">Tap to Browse Files</span>
+      </div>
+
+      <div id="uploadAlert" class="hidden" style="padding: 0.75rem; border-radius: 0.75rem; font-size: 0.775rem;"></div>
+
+      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 0.95rem;">Uploaded Contacts List</h3>
+          <button onclick="openAddModal()" class="btn btn-sky" style="font-size: 0.75rem; padding: 0.35rem 0.75rem; min-height: 36px; width: auto;">+ Add Contact</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Phone (Text.lk)</th>
+                <th>Birthday</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="contactsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. TEMPLATE EDITOR VIEW -->
+    <div id="view-template" class="view-panel hidden" style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <div class="glass-panel">
+        <h3 style="font-size: 1rem;">Visual Drag & Drop Wish Template Editor</h3>
+        <p class="text-muted">Tap or drag field chips to insert placeholder tokens into your wish message.</p>
+      </div>
+
+      <div class="grid-3">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.4rem;">
+            <span class="text-muted" style="font-weight: 700; font-size: 0.65rem; text-transform: uppercase;">TAP OR DRAG FIELD TOKENS:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+              <span draggable="true" ondragstart="dragToken(event, '<<Name>>')" onclick="insertToken('<<Name>>')" class="token-chip badge-pink">⋮⋮ &lt;&lt;Name&gt;&gt;</span>
+              <span draggable="true" ondragstart="dragToken(event, '<<Phone Number>>')" onclick="insertToken('<<Phone Number>>')" class="token-chip badge-emerald">⋮⋮ &lt;&lt;Phone Number&gt;&gt;</span>
+              <span draggable="true" ondragstart="dragToken(event, '<<Birthday>>')" onclick="insertToken('<<Birthday>>')" class="token-chip badge-purple">⋮⋮ &lt;&lt;Birthday&gt;&gt;</span>
+              <span draggable="true" ondragstart="dragToken(event, '<<Department>>')" onclick="insertToken('<<Department>>')" class="token-chip badge-amber">⋮⋮ &lt;&lt;Department&gt;&gt;</span>
+              <span draggable="true" ondragstart="dragToken(event, '<<Designation>>')" onclick="insertToken('<<Designation>>')" class="token-chip badge-pink">⋮⋮ &lt;&lt;Designation&gt;&gt;</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.725rem;" class="text-muted">
+              <span style="font-weight: 700; color: white;">Wish Message Body</span>
+              <span><strong id="charCount" style="color: white;">0</strong> chars | <span id="smsCredits" class="text-pink" style="font-weight: 700;">1 SMS</span></span>
+            </div>
+            <textarea id="templateArea" rows="6" oninput="updateTemplateStats()" ondragover="event.preventDefault()" ondrop="dropToken(event)"></textarea>
+          </div>
+
+          <button onclick="saveWishTemplate()" class="btn btn-pink">💾 Save Wish Template</button>
+        </div>
+
+        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <h3 style="font-size: 0.95rem;">📱 Live Mobile Preview</h3>
+          <div style="background: #030712; padding: 0.85rem; border-radius: 0.75rem; border: 1px solid #1e293b;">
+            <p id="livePreviewText" style="font-size: 0.8rem; color: #e2e8f0; line-height: 1.35; white-space: pre-wrap; font-style: italic;">
+              Preview will appear here...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SCHEDULE VIEW -->
+    <div id="view-schedule" class="view-panel hidden" style="display: flex; flex-direction: column; gap: 0.85rem;">
+      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.65rem;">
+        <div>
+          <h3 style="font-size: 1rem;">Daily Dispatch Send Time Picker</h3>
+          <p class="text-muted">Set exact daily time for automated RFC3339 wishes</p>
+        </div>
+        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+          <input type="time" id="sendTimePicker" value="09:00" style="flex: 1;" />
+          <button onclick="saveSendTime()" class="btn btn-pink" style="flex: 1;">Save Time</button>
+        </div>
+      </div>
+
+      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.65rem;">
+        <h3 style="font-size: 0.95rem;">Dispatch Logs & History</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Recipient</th>
+                <th>Phone</th>
+                <th>Schedule Time</th>
+                <th>Status</th>
+                <th>Message Snippet</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. API SETTINGS VIEW -->
+    <div id="view-api" class="view-panel hidden">
+      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <h3 style="font-size: 1rem;">Text.lk API Gateway Settings</h3>
+
+        <div>
+          <label class="text-muted" style="display: block; margin-bottom: 0.2rem; font-size: 0.75rem;">Text.lk API Token</label>
+          <input type="password" id="apiTokenInput" placeholder="Paste your API token..." />
+        </div>
+
+        <div>
+          <label class="text-muted" style="display: block; margin-bottom: 0.2rem; font-size: 0.75rem;">Sender ID (Max 11 Chars)</label>
+          <input type="text" id="senderIdInput" value="TextLKDemo" />
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
+          <input type="checkbox" id="simulationModeToggle" style="width: 1.1rem; height: 1.1rem; cursor: pointer;" />
+          <label for="simulationModeToggle" style="cursor: pointer; font-size: 0.775rem;">Enable Simulation Mode (Test without spending real SMS credits)</label>
+        </div>
+
+        <button onclick="saveApiSettings()" class="btn btn-pink" style="margin-top: 0.35rem;">💾 Save Gateway Settings</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- EDIT CONTACT MODAL -->
+  <div id="editContactModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 id="modalTitle" style="font-size: 1rem;">Edit Employee Contact</h3>
+      
+      <input type="hidden" id="editContactId" />
+      
+      <div>
+        <label class="text-muted" style="display: block; margin-bottom: 0.15rem; font-size: 0.75rem;">Full Name</label>
+        <input type="text" id="editName" placeholder="Name" />
+      </div>
+
+      <div>
+        <label class="text-muted" style="display: block; margin-bottom: 0.15rem; font-size: 0.75rem;">Phone Number (e.g. 0771234567)</label>
+        <input type="text" id="editPhone" placeholder="Phone" />
+      </div>
+
+      <div>
+        <label class="text-muted" style="display: block; margin-bottom: 0.15rem; font-size: 0.75rem;">Birthday (YYYY-MM-DD)</label>
+        <input type="date" id="editBirthday" />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+        <div>
+          <label class="text-muted" style="display: block; margin-bottom: 0.15rem; font-size: 0.75rem;">Department</label>
+          <input type="text" id="editDepartment" placeholder="Department" />
+        </div>
+        <div>
+          <label class="text-muted" style="display: block; margin-bottom: 0.15rem; font-size: 0.75rem;">Designation</label>
+          <input type="text" id="editDesignation" placeholder="Designation" />
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.4rem; margin-top: 0.4rem;">
+        <button onclick="closeEditModal()" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+        <button onclick="submitEditContact()" class="btn btn-pink" style="flex: 1;">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let appState = { contacts: [], wishTemplate: '', settings: {}, logs: [] };
+
+    async function loadAppState() {
+      try {
+        const res = await fetch('/api/state');
+        appState = await res.json();
+        renderUI();
+      } catch (err) {
+        console.error('Failed to load state', err);
+      }
+    }
+
+    function renderUI() {
+      document.getElementById('headerContactsCount').textContent = appState.contacts.length;
+      document.getElementById('headerSendTime').textContent = appState.settings.sendTime || '09:00';
+      const modeBadge = document.getElementById('modeBadge');
+      if (appState.settings.simulationMode) {
+        modeBadge.textContent = 'Simulation Mode';
+        modeBadge.className = 'badge badge-amber';
+      } else {
+        modeBadge.textContent = 'Live Gateway Active';
+        modeBadge.className = 'badge badge-emerald';
+      }
+
+      document.getElementById('statTotalContacts').textContent = appState.contacts.length;
+      document.getElementById('statScheduledCount').textContent = appState.logs.filter(l => l.status === 'Scheduled').length;
+      document.getElementById('statSentCount').textContent = appState.logs.filter(l => l.status === 'Sent' || l.status === 'Delivered').length;
+
+      const today = new Date();
+      const todayMMDD = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      const todayBdays = appState.contacts.filter(c => {
+        if (!c.birthday) return false;
+        const p = c.birthday.split('-');
+        if (p.length === 3) return `${p[1].padStart(2, '0')}-${p[2].padStart(2, '0')}` === todayMMDD;
+        if (p.length === 2) return `${p[0].padStart(2, '0')}-${p[1].padStart(2, '0')}` === todayMMDD;
+        return false;
+      });
+
+      document.getElementById('statTodayBirthdays').textContent = todayBdays.length;
+      const todayList = document.getElementById('todayBirthdaysList');
+      if (todayBdays.length === 0) {
+        todayList.innerHTML = '<p class="text-muted" style="text-align: center; padding: 1rem;">No birthdays recorded for today</p>';
+      } else {
+        todayList.innerHTML = todayBdays.map(c => `
+          <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center; gap: 0.4rem;">
+            <div>
+              <strong style="font-size: 0.85rem;">${c.name}</strong>
+              <span class="text-pink font-mono" style="margin-left: 0.35rem; font-size: 0.75rem;">${c.phone}</span>
+            </div>
+            <span class="badge badge-purple" style="font-size: 0.65rem;">${c.department}</span>
+          </div>
+        `).join('');
+      }
+
+      const tbody = document.getElementById('contactsTableBody');
+      tbody.innerHTML = appState.contacts.map((c, i) => `
+        <tr>
+          <td style="font-family: monospace; color: #64748b;">${i + 1}</td>
+          <td><strong>${c.name}</strong></td>
+          <td class="text-emerald font-mono">${c.phone}</td>
+          <td class="text-pink font-mono">${c.birthday}</td>
+          <td>${c.department || 'General'}</td>
+          <td style="color: #94a3b8;">${c.designation || 'Staff'}</td>
+          <td style="text-align: right;">
+            <button onclick="openEditModal('${c.id}')" style="background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 0.2rem 0.35rem;" title="Edit Contact">✏️</button>
+            <button onclick="deleteContact('${c.id}')" style="background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 0.2rem 0.35rem;" title="Delete Contact">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('templateArea').value = appState.wishTemplate;
+      updateTemplateStats();
+
+      document.getElementById('sendTimePicker').value = appState.settings.sendTime || '09:00';
+      document.getElementById('apiTokenInput').value = appState.settings.apiToken || '';
+      document.getElementById('senderIdInput').value = appState.settings.senderId || 'TextLKDemo';
+      document.getElementById('simulationModeToggle').checked = !!appState.settings.simulationMode;
+
+      const logsBody = document.getElementById('logsTableBody');
+      logsBody.innerHTML = appState.logs.map(l => `
+        <tr>
+          <td><strong>${l.contactName}</strong></td>
+          <td class="text-emerald font-mono">${l.phone}</td>
+          <td class="text-purple font-mono">${l.scheduledTime}</td>
+          <td><span class="badge badge-purple">${l.status}</span></td>
+          <td style="color: #94a3b8; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${l.message}</td>
+        </tr>
+      `).join('');
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      const panel = document.getElementById(`view-${tabId}`);
+      if (panel) panel.classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function openEditModal(id) {
+      const contact = appState.contacts.find(c => c.id === id);
+      if (!contact) return;
+      document.getElementById('modalTitle').textContent = 'Edit Contact';
+      document.getElementById('editContactId').value = contact.id;
+      document.getElementById('editName').value = contact.name || '';
+      document.getElementById('editPhone').value = contact.phone || '';
+      document.getElementById('editBirthday').value = contact.birthday || '';
+      document.getElementById('editDepartment').value = contact.department || 'General';
+      document.getElementById('editDesignation').value = contact.designation || 'Staff';
+      document.getElementById('editContactModal').classList.remove('hidden');
+    }
+
+    function openAddModal() {
+      document.getElementById('modalTitle').textContent = 'Add New Contact';
+      document.getElementById('editContactId').value = '';
+      document.getElementById('editName').value = '';
+      document.getElementById('editPhone').value = '';
+      document.getElementById('editBirthday').value = '';
+      document.getElementById('editDepartment').value = 'General';
+      document.getElementById('editDesignation').value = 'Staff';
+      document.getElementById('editContactModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editContactModal').classList.add('hidden');
+    }
+
+    async function submitEditContact() {
+      const id = document.getElementById('editContactId').value;
+      const payload = {
+        name: document.getElementById('editName').value,
+        phone: document.getElementById('editPhone').value,
+        birthday: document.getElementById('editBirthday').value,
+        department: document.getElementById('editDepartment').value,
+        designation: document.getElementById('editDesignation').value
+      };
+
+      if (!payload.name || !payload.phone || !payload.birthday) {
+        alert('Name, Phone, and Birthday are required.');
+        return;
+      }
+
+      if (id) {
+        const res = await fetch(`/api/contacts/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.error) alert(data.error);
+      } else {
+        const res = await fetch('/api/contacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.error) alert(data.error);
+      }
+
+      closeEditModal();
+      loadAppState();
+    }
+
+    function dragToken(e, token) { e.dataTransfer.setData('text/plain', token); }
+    function dropToken(e) {
+      e.preventDefault();
+      const token = e.dataTransfer.getData('text/plain');
+      if (token) insertToken(token);
+    }
+    function insertToken(token) {
+      const area = document.getElementById('templateArea');
+      const start = area.selectionStart || 0;
+      const end = area.selectionEnd || 0;
+      area.value = area.value.substring(0, start) + token + area.value.substring(end);
+      updateTemplateStats();
+      area.focus();
+    }
+
+    function updateTemplateStats() {
+      const text = document.getElementById('templateArea').value;
+      document.getElementById('charCount').textContent = text.length;
+      document.getElementById('smsCredits').textContent = `${Math.ceil(text.length / 160) || 1} SMS`;
+      document.getElementById('livePreviewText').textContent = text.replace(/<<Name>>/gi, 'Kasun Perera').replace(/<<Department>>/gi, 'Engineering');
+    }
+
+    async function uploadExcelFile(file) {
+      if (!file) return;
+      const formData = new FormData();
+      formData.append('excelFile', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      const alertEl = document.getElementById('uploadAlert');
+      alertEl.classList.remove('hidden');
+      if (data.success) {
+        alertEl.style.background = 'rgba(16, 185, 129, 0.15)';
+        alertEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        alertEl.style.color = '#34d399';
+        alertEl.textContent = `Extracted ${data.count} contacts from Excel!`;
+      } else {
+        alertEl.style.background = 'rgba(244, 63, 94, 0.15)';
+        alertEl.style.border = '1px solid rgba(244, 63, 94, 0.3)';
+        alertEl.style.color = '#fb7185';
+        alertEl.textContent = data.error || 'Failed to process Excel file.';
+      }
+      loadAppState();
+    }
+
+    async function saveWishTemplate() {
+      const template = document.getElementById('templateArea').value;
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wishTemplate: template })
+      });
+      alert('Wish template saved!');
+      loadAppState();
+    }
+
+    async function saveSendTime() {
+      const sendTime = document.getElementById('sendTimePicker').value;
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings: { sendTime } })
+      });
+      alert('Send time saved!');
+      loadAppState();
+    }
+
+    async function saveApiSettings() {
+      const settings = {
+        apiToken: document.getElementById('apiTokenInput').value,
+        senderId: document.getElementById('senderIdInput').value,
+        simulationMode: document.getElementById('simulationModeToggle').checked
+      };
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings })
+      });
+      alert('API settings saved!');
+      loadAppState();
+    }
+
+    async function sendQuickTestSMS() {
+      const recipient = document.getElementById('quickTestPhone').value;
+      const res = await fetch('/api/sms/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipient })
+      });
+      const data = await res.json();
+      const el = document.getElementById('quickTestResult');
+      el.classList.remove('hidden');
+      el.style.background = data.status ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)';
+      el.style.color = data.status ? '#34d399' : '#fb7185';
+      el.textContent = data.message;
+      loadAppState();
+    }
+
+    async function deleteContact(id) {
+      if (confirm('Delete contact?')) {
+        await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+        loadAppState();
+      }
+    }
+
+    window.onload = loadAppState;
+  </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+{
+  "contacts": [
+    {
+      "id": "c_1",
+      "name": "Janith Manodaya",
+      "phone": "94771234567",
+      "birthday": "1996-08-15",
+      "department": "Software Engineering",
+      "designation": "Senior Developer"
+    },
+    {
+      "id": "c_2",
+      "name": "Nimali Perera",
+      "phone": "94719876543",
+      "birthday": "1998-07-28",
+      "department": "Marketing",
+      "designation": "Executive"
+    },
+    {
+      "id": "c_3",
+      "name": "Kamal Jayasinghe",
+      "phone": "94755554433",
+      "birthday": "1992-12-05",
+      "department": "Human Resources",
+      "designation": "HR Manager"
+    }
+  ],
+  "wishTemplate": "🎉 Warm Birthday Wishes! Dear <<Name>>, wishing you a very Happy Birthday from all of us at <<Department>>! May your year ahead be filled with success, health, and happiness. 🎂✨",
+  "settings": {
+    "apiToken": "6292|lmaszchAa9olYfpCMzIs4M5HHIW79E1bQbeqBpN7635f7bf4",
+    "senderId": "TextLKDemo",
+    "authMethod": "oauth",
+    "sendTime": "09:00",
+    "simulationMode": false
+  },
+  "logs": [
+    {
+      "id": "log_1785171334194gwp",
+      "contactId": "c_3",
+      "contactName": "Kamal Jayasinghe",
+      "phone": "94755554433",
+      "department": "Human Resources",
+      "message": "🎉 Warm Birthday Wishes! Dear Kamal Jayasinghe, wishing you a very Happy Birthday from all of us at Human Resources! May your year ahead be filled with success, health, and happiness. 🎂✨",
+      "targetDate": "2026-12-05",
+      "scheduledTime": "2026-12-05 09:00",
+      "status": "Scheduled",
+      "response": {
+        "status": true,
+        "isSimulated": true,
+        "message": "SMS queued successfully (Simulated)",
+        "data": {
+          "uid": "sim_1785171334194f63v5",
+          "to": "94755554433",
+          "from": "TextLKDemo",
+          "message": "🎉 Warm Birthday Wishes! Dear Kamal Jayasinghe, wishing you a very Happy Birthday from all of us at Human Resources! May your year ahead be filled with success, health, and happiness. 🎂✨",
+          "status": "Scheduled",
+          "cost": "1",
+          "sms_count": 2
+        }
+      },
+      "createdAt": "2026-07-27T16:55:34.194Z"
+    },
+    {
+      "id": "log_1785171334193fid",
+      "contactId": "c_2",
+      "contactName": "Nimali Perera",
+      "phone": "94719876543",
+      "department": "Marketing",
+      "message": "🎉 Warm Birthday Wishes! Dear Nimali Perera, wishing you a very Happy Birthday from all of us at Marketing! May your year ahead be filled with success, health, and happiness. 🎂✨",
+      "targetDate": "2026-07-28",
+      "scheduledTime": "2026-07-28 09:00",
+      "status": "Scheduled",
+      "response": {
+        "status": true,
+        "isSimulated": true,
+        "message": "SMS queued successfully (Simulated)",
+        "data": {
+          "uid": "sim_1785171334193dqavy",
+          "to": "94719876543",
+          "from": "TextLKDemo",
+          "message": "🎉 Warm Birthday Wishes! Dear Nimali Perera, wishing you a very Happy Birthday from all of us at Marketing! May your year ahead be filled with success, health, and happiness. 🎂✨",
+          "status": "Scheduled",
+          "cost": "1",
+          "sms_count": 2
+        }
+      },
+      "createdAt": "2026-07-27T16:55:34.193Z"
+    },
+    {
+      "id": "log_17851713341904qw",
+      "contactId": "c_1",
+      "contactName": "Janith Manodaya",
+      "phone": "94771234567",
+      "department": "Software Engineering",
+      "message": "🎉 Warm Birthday Wishes! Dear Janith Manodaya, wishing you a very Happy Birthday from all of us at Software Engineering! May your year ahead be filled with success, health, and happiness. 🎂✨",
+      "targetDate": "2026-08-15",
+      "scheduledTime": "2026-08-15 09:00",
+      "status": "Scheduled",
+      "response": {
+        "status": true,
+        "isSimulated": true,
+        "message": "SMS queued successfully (Simulated)",
+        "data": {
+          "uid": "sim_1785171334189ays5y",
+          "to": "94771234567",
+          "from": "TextLKDemo",
+          "message": "🎉 Warm Birthday Wishes! Dear Janith Manodaya, wishing you a very Happy Birthday from all of us at Software Engineering! May your year ahead be filled with success, health, and happiness. 🎂✨",
+          "status": "Scheduled",
+          "cost": "1",
+          "sms_count": 2
+        }
+      },
+      "createdAt": "2026-07-27T16:55:34.190Z"
+    }
+  ]
+}

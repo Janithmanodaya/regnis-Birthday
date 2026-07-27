@@ -1,0 +1,691 @@
+
+API Endpoints Introduction
+Welcome to the Text.lk API documentation – API Endpoints Introduction. This text.lk documentation guide explains the available Text.lk API endpoints, authentication methods, and how to integrate SMS functionality into your system using the Text.lk platform.
+
+Text.lk REST API
+As the fastest SMS API in Sri Lanka, Text.lk provides secure and reliable SMS delivery through REST-based APIs that can be integrated into web applications, mobile apps, CRM systems, ERP platforms, and other software solutions.
+
+Authentication Methods (There are two types)
+Text.lk provides two methods to integrate with the API. Because text.lk supports two authentication methods, but both do the same thing.
+
+OAuth 2.0 (Bearer Token) – Recommended
+HTTP (API Token in URL)
+Below is an overview of both authentication methods, the differences between each method, and when to use each.
+
+👉 Learn how to get your API Key / API Token
+
+1. OAuth 2.0 (Bearer Token) – Recommended
+This is the modern and secure method for production environments.
+
+Uses Authorization: Bearer YOUR_API_TOKEN
+Uses the POST method
+Data is sent as JSON
+The API token is not exposed in the URL
+More secure for large-scale systems
+Recommended for enterprise applications
+Endpoint for Send SMS
+https://app.text.lk/api/v3/sms/send
+https://app.text.lk/api/v3/sms/send
+Example Request for Send SMS
+curl -X POST https://app.text.lk/api/v3/sms/send \
+-H "Authorization: Bearer YOUR_API_TOKEN" \
+-H "Content-Type: application/json" \
+-H "Accept: application/json" \
+-d '{
+"recipient": "94710000000",
+"sender_id": "TextLKDemo",
+"type": "plain",
+"message": "This is a test message"
+}'
+curl -X POST https://app.text.lk/api/v3/sms/send \
+-H "Authorization: Bearer YOUR_API_TOKEN" \
+-H "Content-Type: application/json" \
+-H "Accept: application/json" \
+-d '{
+  "recipient": "94710000000",
+  "sender_id": "TextLKDemo",
+  "type": "plain",
+  "message": "This is a test message"
+}'
+When to Use
+Web applications
+Mobile apps
+Backend systems
+Production environments
+2. HTTP GET Method (API Token in URL)
+This is a simple method mainly for legacy systems or quick integrations.
+
+Uses the GET method
+API token is passed as the api_token parameter in the URL
+All parameters are included in the URL
+Easy & Quick to integrate
+Recommended for systems that cannot send headers
+Recommended for testing purposes
+Learn more about: Is using a Api token in url or post/curl safe?
+
+Endpoint for Send SMS
+https://app.text.lk/api/http/sms/send
+https://app.text.lk/api/http/sms/send
+Example Request for Send SMS
+https://app.text.lk/api/http/sms/send?recipient=94710000000&sender_id=TextLKDemo&type=plain&message=This%20is%20a%20test%20message&api_token=YOUR_API_TOKEN
+https://app.text.lk/api/http/sms/send?recipient=94710000000&sender_id=TextLKDemo&type=plain&message=This%20is%20a%20test%20message&api_token=YOUR_API_TOKEN
+When to Use
+Systems that cannot send headers
+Simple integrations
+Quick testing via browser
+👉 See also: How to send SMS via Text.lk API?
+👉 See also: success response examples.
+👉 See also: Error formats and status codes.
+
+Why Are There Two Documentations (HTTP & OAuth 2.0)?
+Text.lk provides two integration methods to support different types of systems and technical requirements.
+
+Both methods perform the same function (sending SMS), but they differ in security level, structure, and implementation style.
+
+👉 Learn More about: Why Are There Two Documentations in Text.lk (HTTP & OAuth 2.0)?
+
+Which One Should You Use?
+👉 For new integrations, always use OAuth 2.0 (Bearer Token method).
+👉 Use the HTTP GET method only if your system does not support POST requests with headers.
+
+Best Practice Recommendation
+For secure, scalable, and production-ready applications:
+
+✔ Use OAuth 2.0 (Bearer Token)
+✔ Avoid exposing API tokens in URLs
+✔ Use HTTPS for all API calls
+
+
+
+Send SMS
+Text.lk – SMS Gateway Sri Lanka’s Programmable SMS API enables you to programmatically send SMS messages from your web application. First, you need to create a new message object. Text.lk – SMS Gateway Sri Lanka returns the created message object with each request.
+
+Send your first SMS message with this example request.
+
+API Endpoint
+https://app.text.lk/api/v3/sms/send
+HTTP
+Parameters
+Parameter	Required	Type	Description
+recipient	Yes	string	Number to send a message. Use comma (,) to send multiple numbers.
+Eg: 9476000000,94710000000
+sender_id	Yes	string	The sender of the message. This can be a telephone number (including country code) or an alphanumeric string. In case of an alphanumeric string, the maximum length is 11 characters.
+type	Yes	string	The type of the message. For text message you have to insert plain as sms type.
+message	Yes	string	The body of the SMS message.
+schedule_time	No	datetime	The scheduled date and time of the message in RFC3339 format (Y-m-d H:i)
+dlt_template_id	No	string	The ID of your registered DLT (Distributed Ledger Technology) content template.
+Text.lk SMS Gateway Sri Lanka | Parameters for Send SMS
+Example request for Single Number
+curl -X POST https://app.text.lk/api/v3/sms/send \
+-H 'Authorization: Bearer API_KEY' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-d '{
+	"recipient":"94710000000",
+	"sender_id":"TextLKDemo",
+	"type":"plain",
+	"message":"This is a test message",
+	"schedule_time=2025-12-20 07:00"
+}'
+HTTP
+Example request for Multiple Numbers
+curl -X POST https://app.text.lk/api/v3/sms/send \
+-H 'Authorization: Bearer API_KEY' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-d '{
+	"recipient":"94710000000,94770000000",
+	"sender_id":"TextLKDemo",
+	"type":"plain",
+	"message":"This is a test message",
+	"schedule_time=2025-12-20 07:00"
+}'
+HTTP
+Example Response
+Returns a contact object if the request is successful.
+
+{
+    "status": "success",
+    "message": "Your message was successfully delivered",
+    "data": {
+        "uid": "12345yyyyxxxx",
+        "to": "94710000000",
+        "from": "TextLKDemo",
+        "message": "This is testing message",
+        "status": "Delivered",
+        "cost": "1",
+        "sms_count": 1
+    }
+}
+HTTP
+If the request fails, an error object will be returned.
+
+{
+    "status": "error",
+    "message" : "A human-readable description of the error."
+}
+HTTP
+
+
+SMS API Endpoints
+Text.lk provides two methods to integrate with the API:
+
+OAuth 2.0 (Recommended)
+HTTP API (Simple Token-Based Requests)
+1️⃣ Send SMS
+Send a single SMS message.
+
+🔐 OAuth 2.0 – Send SMS
+Endpoint (POST)
+https://app.text.lk/api/v3/sms/send
+Example Request (cURL)
+curl -X POST https://app.text.lk/api/v3/sms/send \
+-H 'Authorization: Bearer YOUR_API_TOKEN' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-d '{
+  "recipient": "94710000000",
+  "sender_id": "TextLKDemo",
+  "type": "plain",
+  "message": "This is a test message"
+}'
+Request Parameters
+Parameter	Required	Type	Description
+recipient	Yes	string	Number to send a message. Use comma (,) to send multiple numbers.
+Eg: 9476000000,94710000000
+sender_id	Yes	string	The sender of the message. This can be a telephone number (including country code) or an alphanumeric string. In case of an alphanumeric string, the maximum length is 11 characters.
+type	Yes	string	The type of the message. For text message you have to insert plain as sms type.
+message	Yes	string	The body of the SMS message.
+schedule_time	No	datetime	The scheduled date and time of the message in RFC3339 format (Y-m-d H:i)
+dlt_template_id	No	string	The ID of your registered DLT (Distributed Ledger Technology) content template.
+Text.lk SMS Gateway Sri Lanka | Parameters for Send SMS
+🌐 HTTP – Send SMS
+Endpoint (GET)
+https://app.text.lk/api/http/sms/send
+Example Request
+https://app.text.lk/api/http/sms/send?recipient=94710000000&sender_id=TextLKDemo&type=plain&message=This%20is%20a%20test%20message&api_token=YOUR_API_TOKEN
+HTTP Parameters
+Parameter	Required	Type	Description
+recipient	Yes	string	Number to send a message. Use comma (,) to send multiple numbers.
+Eg: 9476000000,94710000000
+sender_id	Yes	string	The sender of the message. This can be a telephone number (including country code) or an alphanumeric string. In case of an alphanumeric string, the maximum length is 11 characters.
+type	Yes	string	The type of the message. For text message you have to insert plain as sms type.
+message	Yes	string	The body of the SMS message.
+schedule_time	No	datetime	The scheduled date and time of the message in RFC3339 format (Y-m-d H:i)
+dlt_template_id	No	string	The ID of your registered DLT (Distributed Ledger Technology) content template.
+Text.lk SMS Gateway Sri Lanka | Parameters for Send SMS
+Success & Error Responses (OAuth and HTTP)
+✅ Success Response
+{
+  "status": true,
+  "message": "SMS queued successfully",
+  "data": {
+    "sms_id": "abc123",
+    "recipient": "94710000000"
+  }
+}
+❌ Error Response
+{
+  "status": false,
+  "message": "Invalid recipient number"
+}
+View SMS
+View a single SMS message.
+
+Read full documentation: https://text.lk/docs/view-sms/
+
+🔐 OAuth 2.0 – View SMS
+Endpoint (POST)
+https://app.text.lk/api/v3/sms/{uid}
+🌐 HTTP – View SMS
+Endpoint (GET)
+https://app.text.lk/api/http/sms/{uid}
+
+Create SMS Contact
+Creates a new contact object. Text.lk – SMS Gateway Sri lanka returns the created contact object with each request.
+
+API Endpoint
+https://app.text.lk/api/v3/contacts/{group_id}/store
+HTTP
+Parameters
+Parameter	Required	Type	Description
+group_id	Yes	string	Contact Groups uid
+PHONE	Yes	number	The phone number of the contact.
+OTHER_FIELDS	No	string	All Contact’s other fields: FIRST_NAME (?), LAST_NAME (?),…
+
+(depending on the contact group fields configuration)
+Text.lk SMS Create Contact
+Example request
+
+Returns
+Returns a contact object if the request is successful.
+
+{
+    "status": "success",
+    "data": "contacts data with all details",
+}
+HTTP
+If the request fails, an error object will be returned.
+
+{
+    "status": "error",
+    "message" : "A human-readable description of the error."
+}
+HTTP
+SMS Contacts Initialize
+Text.lk – SMS Gateway Sri lanka Contacts API helps you manage contacts that are identified by a unique random ID. Using this ID, you can create, view, update, or delete contacts. This API works as a collection of customer-specific contacts that allows you to group them and assign custom values that you can later use when sending SMS template messages.
+
+The Contacts API uses HTTP verbs and a RESTful endpoint structure with an access key that is used as the API Authorization. Request and response payloads are formatted as JSON using UTF-8 encoding and URL encoded values.
+
+API Endpoint
+https://app.text.lk/api/v3/contacts
+HTTP
+Parameters
+Parameter	Required	Description
+Authorization	Yes	When calling our API, send your api token with the authentication type set as Bearer
+
+Example:
+Authorization: Bearer {api_token}
+Accept	Yes	application/json
+
+Update SMS contact
+Updates an existing contact. You only need to supply the unique uid of contact and contact group uid that was returned upon creation.
+
+API Endpoint
+https://app.text.lk/api/v3/contacts/{group_id}/update/{uid}
+HTTP
+Parameters
+Example request
+curl -X PATCH https://app.text.lk/api/v3/contacts/{group_id}/update/{uid} \
+-H 'Authorization: Bearer API_KEY' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-d '{
+"PHONE":"8801721970168",
+"FIRST_NAME":"Jhon",
+"LAST_NAME":"Doe",
+}'
+HTTP
+Returns
+Returns a contact object if the request is successful.
+
+{
+    "status": "success",
+    "data": "contacts data with all details",
+}
+HTTP
+If the request failed, an error object will be returned.
+
+{
+    "status": "error",
+    "message" : "A human-readable description of the error."
+}
+
+View SMS Contact
+Retrieves the information of an existing contact. You only need to supply the unique contact uid and group uid that was returned upon creation or receiving.
+
+API Endpoint
+https://app.text.lk/api/v3/contacts/{group_id}/search/{uid}
+HTTP
+Example request
+
+Returns
+Returns a contact object if the request is successful.
+
+{
+    "status": "success",
+    "data": "contacts data with all details",
+}
+HTTP
+If the request fails, an error object will be returned.
+
+{
+    "status": "error",
+    "message" : "A human-readable description of the error."
+}
+
+Text.lk Next.js Integration Guide
+Send SMS messages in your Next.js applications using the Text.lk SMS Gateway API in Sri Lanka. This guide provides simple, production-ready code examples for Next.js to get you started quickly.
+
+Prerequisites
+Next.js project (App Router or Pages Router)
+Text.LK account with API token
+Basic knowledge of React and Next.js
+Getting Your API Token
+Sign up at Text.lk
+Navigate to your dashboard
+Copy your API token from the API settings
+API Reference
+Text.LK Send SMS Endpoint
+GET https://app.text.lk/api/http/sms/send
+Parameters:
+recipient (required): Phone number with country code (e.g., 94710000000)
+sender_id (required): Your brand name or sender ID
+message (required): SMS content (max 160 characters for single SMS)
+api_token (required): Your Text.LK API token
+Example Success Response:
+{
+    "status": "success",
+    "message": "Your message was successfully delivered",
+    "data": {
+        "uid": "689f012753f11",
+        "to": "94771234567",
+        "from": "TextLKDemo",
+        "message": "This is test message",
+        "status": "Delivered",
+        "cost": "1",
+        "sms_count": 1
+    }
+}
+Example Error Response:
+{
+    "status": "error",
+    "message": "A human-readable description of the error."
+}
+Quick Setup
+Environment Variables
+Create a .env.local file in your project root:
+
+TEXTLK_API_TOKEN=your_api_token_here
+TEXTLK_SENDER_ID=YourBrandName
+Implementation Methods
+Method 1: Server-Side API Route (Recommended)
+Create an API route to handle SMS sending securely.
+
+File: app/api/textlk/send/route.js (App Router)
+
+import { NextResponse } from 'next/server';
+
+export async function POST(request) {
+  try {
+    const { recipient, message, senderId } = await request.json();
+
+    const response = await sendTextLKSMS({
+      recipient,
+      message,
+      senderId: senderId || process.env.TEXTLK_SENDER_ID
+    });
+
+    return NextResponse.json(response);
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to send SMS' },
+      { status: 500 }
+    );
+  }
+}
+
+async function sendTextLKSMS({ recipient, message, senderId }) {
+  const url = new URL('https://app.text.lk/api/http/sms/send');
+
+  url.searchParams.append('recipient', recipient);
+  url.searchParams.append('sender_id', senderId);
+  url.searchParams.append('message', message);
+  url.searchParams.append('api_token', process.env.TEXTLK_API_TOKEN);
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error(`Text.LK API error: ${response.status}`);
+  }
+
+  return await response.json();
+}
+For Pages Router: pages/api/textlk/send.js
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { recipient, message, senderId } = req.body;
+
+    const response = await sendTextLKSMS({
+      recipient,
+      message,
+      senderId: senderId || process.env.TEXTLK_SENDER_ID
+    });
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to send SMS' });
+  }
+}
+
+async function sendTextLKSMS({ recipient, message, senderId }) {
+  const url = new URL('https://app.text.lk/api/http/sms/send');
+
+  url.searchParams.append('recipient', recipient);
+  url.searchParams.append('sender_id', senderId);
+  url.searchParams.append('message', message);
+  url.searchParams.append('api_token', process.env.TEXTLK_API_TOKEN);
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error(`Text.LK API error: ${response.status}`);
+  }
+
+  return await response.json();
+}
+Method 2: Custom Hook for Client Components
+Create a reusable hook for SMS functionality.
+
+File: hooks/useTextLK.js
+
+import { useState } from 'react';
+
+export function useTextLK() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendSMS = async ({ recipient, message, senderId }) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/textlk/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          recipient,
+          message,
+          senderId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send SMS');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { sendSMS, loading, error };
+}
+Usage Examples
+Simple SMS Form Component
+'use client'; // Only needed for App Router
+
+import { useState } from 'react';
+import { useTextLK } from '../hooks/useTextLK';
+
+export default function SMSForm() {
+  const [recipient, setRecipient] = useState('');
+  const [message, setMessage] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const { sendSMS, loading, error } = useTextLK();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccess(false);
+
+    try {
+      await sendSMS({
+        recipient,
+        message,
+        senderId: 'YourBrand' // Optional: will use env variable if not provided
+      });
+
+      setSuccess(true);
+      setRecipient('');
+      setMessage('');
+    } catch (err) {
+      console.error('SMS send failed:', err);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">Send SMS with Text.LK</h2>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-2">
+          Phone Number (with country code)
+        </label>
+        <input
+          type="tel"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+          placeholder="94710000000"
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-2">
+          Message
+        </label>
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Your message here..."
+          className="w-full p-2 border rounded h-24"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:opacity-50"
+      >
+        {loading ? 'Sending...' : 'Send SMS'}
+      </button>
+
+      {error && (
+        <div className="mt-4 p-2 bg-red-100 text-red-700 rounded">
+          Error: {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mt-4 p-2 bg-green-100 text-green-700 rounded">
+          SMS sent successfully!
+        </div>
+      )}
+    </form>
+  );
+}
+Server Action (App Router Only)
+For server-side SMS sending without API routes:
+
+File: lib/textlk-actions.js
+
+'use server';
+
+export async function sendTextLKNotification(recipient, message) {
+  try {
+    const url = new URL('https://app.text.lk/api/http/sms/send');
+
+    url.searchParams.append('recipient', recipient);
+    url.searchParams.append('sender_id', process.env.TEXTLK_SENDER_ID);
+    url.searchParams.append('message', message);
+    url.searchParams.append('api_token', process.env.TEXTLK_API_TOKEN);
+
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      throw new Error(`Text.LK API error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Text.LK SMS failed:', error);
+    throw new Error('Failed to send SMS notification');
+  }
+}
+Utility Functions
+Phone Number Validation
+export function validateSriLankanPhone(phone) {
+  // Remove spaces, dashes, and plus signs
+  const cleaned = phone.replace(/[\s\-\+]/g, '');
+
+  // Check if it's a valid Sri Lankan number
+  const sriLankanPattern = /^(?:94|0)?[1-9][0-9]{8}$/;
+
+  if (!sriLankanPattern.test(cleaned)) {
+    return { isValid: false, formatted: null };
+  }
+
+  // Format to international format
+  let formatted = cleaned;
+  if (formatted.startsWith('0')) {
+    formatted = '94' + formatted.substring(1);
+  } else if (!formatted.startsWith('94')) {
+    formatted = '94' + formatted;
+  }
+
+  return { isValid: true, formatted };
+}
+Message Templates
+export const textLKTemplates = {
+  welcome: (name) => `Welcome to our service, ${name}! Thanks for joining us.`,
+
+  otp: (code) => `Your verification code is: ${code}. Valid for 5 minutes.`,
+
+  orderConfirmation: (orderNumber) => 
+    `Order #${orderNumber} confirmed! We'll notify you when it ships.`,
+
+  reminder: (event, time) => 
+    `Reminder: ${event} is scheduled for ${time}.`,
+};
+Error Handling
+Comprehensive Error Handler
+export function handleTextLKError(error) {
+  console.error('Text.LK Error:', error);
+
+  // Common error scenarios
+  if (error.message.includes('401')) {
+    return 'Invalid API token. Please check your credentials.';
+  }
+
+  if (error.message.includes('400')) {
+    return 'Invalid phone number or message format.';
+  }
+
+  if (error.message.includes('429')) {
+    return 'Rate limit exceeded. Please try again later.';
+  }
+
+  return 'Failed to send SMS. Please try again.';
+}
+Best Practices
+Security: Never expose your API token in client-side code
+Validation: Always validate phone numbers before sending
+Rate Limiting: Implement client-side rate limiting for user actions
+Error Handling: Provide meaningful error messages to users
+Loading States: Show loading indicators during SMS sending
+Environment Variables: Use different tokens for development and production
