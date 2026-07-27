@@ -5,15 +5,15 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files first (layer cache optimisation)
-COPY package.json package-lock.json* ./
+# Copy only package.json — NOT package-lock.json.
+# The lock file contains an empty-version entry from the xlsx package
+# which causes npm to throw "Invalid Version:" before installing anything.
+# A fresh npm install resolves all versions correctly from the registry.
+COPY package.json ./
 
-# Install ALL deps (devDeps are needed for Vite build).
-# NOTE: npm ci fails with "Invalid Version:" due to a known xlsx
-#       package-lock.json entry bug. npm install handles it correctly.
-RUN npm install --prefer-offline
+RUN npm install
 
-# Copy source files
+# Copy all source files
 COPY . .
 
 # Build Vite → dist/
@@ -26,9 +26,9 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Install only production dependencies
-COPY package.json package-lock.json* ./
-RUN npm install --omit=dev --prefer-offline
+# Copy only package.json for a clean production install
+COPY package.json ./
+RUN npm install --omit=dev
 
 # Copy compiled Vite frontend from builder stage
 COPY --from=builder /app/dist ./dist

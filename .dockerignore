@@ -10,3 +10,8 @@ uploads/*
 README.md
 .DS_Store
 Thumbs.db
+
+# Exclude the lock file — it contains an empty-version xlsx entry that
+# causes "npm error Invalid Version:" before any package is installed.
+# The Dockerfile copies only package.json and resolves fresh from registry.
+package-lock.json
