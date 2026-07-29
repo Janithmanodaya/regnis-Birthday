@@ -53,7 +53,7 @@ echo.
 echo --- 6. Add Remote Origin (Force clean setup) ---
 :ASK_URL
 set "REMOTE_URL="
-set /p REMOTE_URL="Please enter the GitHub remote URL (e.g., https://github.com/user/repo.git): "
+set /p REMOTE_URL=https://github.com/Janithmanodaya/regnis-Birthday.git
 if "%REMOTE_URL%"=="" (
 echo Error: Remote URL cannot be empty.
 goto ASK_URL
