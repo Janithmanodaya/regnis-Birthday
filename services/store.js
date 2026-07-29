@@ -36,9 +36,11 @@ const DEFAULT_DATA = {
     senderId: process.env.TEXTLK_SENDER_ID || 'TextLKDemo',
     authMethod: process.env.TEXTLK_AUTH_METHOD || 'oauth',
     sendTime: '09:00',
-    simulationMode: false
+    simulationMode: false,
+    smsRate: 2.0
   },
-  logs: []
+  logs: [],
+  customLists: []
 };
 
 export class Store {
@@ -76,7 +78,18 @@ export class Store {
   }
 
   get() {
+    if (!this.data.customLists) {
+      this.data.customLists = [];
+    }
+    if (this.data.settings && this.data.settings.smsRate === undefined) {
+      this.data.settings.smsRate = 2.0;
+    }
     return this.data;
+  }
+
+  setCustomLists(customLists) {
+    this.data.customLists = customLists;
+    this.save();
   }
 
   setContacts(contacts) {

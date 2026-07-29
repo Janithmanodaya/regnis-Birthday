@@ -4,6 +4,10 @@ import { FileSpreadsheet, Upload, Download, Search, Plus, Trash2, Edit, CheckCir
 export default function ExcelManager({ state, onRefreshState }) {
   const contacts = state?.contacts || [];
 
+  // Extract unique departments & designations for autocomplete
+  const existingDepartments = [...new Set(contacts.map(c => c.department).filter(Boolean))];
+  const existingDesignations = [...new Set(contacts.map(c => c.designation).filter(Boolean))];
+
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState(null);
@@ -430,19 +434,31 @@ export default function ExcelManager({ state, onRefreshState }) {
                   <label className="block text-xs text-slate-400 mb-1">Department</label>
                   <input
                     type="text"
+                    list="departments-list"
                     value={contactForm.department}
                     onChange={(e) => setContactForm({...contactForm, department: e.target.value})}
                     className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:border-sky-500"
                   />
+                  <datalist id="departments-list">
+                    {existingDepartments.map(dept => (
+                      <option key={dept} value={dept.trim()} />
+                    ))}
+                  </datalist>
                 </div>
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">Designation</label>
                   <input
                     type="text"
+                    list="designations-list"
                     value={contactForm.designation}
                     onChange={(e) => setContactForm({...contactForm, designation: e.target.value})}
                     className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:border-sky-500"
                   />
+                  <datalist id="designations-list">
+                    {existingDesignations.map(desg => (
+                      <option key={desg} value={desg.trim()} />
+                    ))}
+                  </datalist>
                 </div>
               </div>
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">

@@ -23,6 +23,22 @@
       "birthday": "1992-12-05",
       "department": "Human Resources",
       "designation": "HR Manager"
+    },
+    {
+      "id": "c_1785301819399",
+      "name": "Manodya",
+      "phone": "94788620859",
+      "birthday": "2002-03-09",
+      "department": "IT Department ",
+      "designation": "Staff"
+    },
+    {
+      "id": "c_1785302123528",
+      "name": "gemunu",
+      "phone": "94770889232",
+      "birthday": "1988-05-12",
+      "department": "Human Resources",
+      "designation": "Staff"
     }
   ],
   "wishTemplate": "🎉 Warm Birthday Wishes! Dear <<Name>>, wishing you a very Happy Birthday from all of us at <<Department>>! May your year ahead be filled with success, health, and happiness. 🎂✨",
@@ -31,9 +47,77 @@
     "senderId": "TextLKDemo",
     "authMethod": "oauth",
     "sendTime": "09:00",
-    "simulationMode": false
+    "simulationMode": false,
+    "smsRate": 2
   },
   "logs": [
+    {
+      "id": "log_1785302131818zhu",
+      "contactId": "c_1785302123528",
+      "contactName": "gemunu",
+      "phone": "94770889232",
+      "department": "Human Resources",
+      "message": "🎉 Warm Birthday Wishes! Dear gemunu, wishing you a very Happy Birthday from all of us at Human Resources! May your year ahead be filled with success, health, and happiness. 🎂✨",
+      "targetDate": "2027-05-12",
+      "scheduledTime": "2027-05-12 09:00",
+      "status": "Scheduled",
+      "response": {
+        "status": true,
+        "message": "Your message was successfully delivered",
+        "data": {
+          "uid": "6a698c73abcac",
+          "to": "94770889232",
+          "from": "TextLKDemo",
+          "message": "🎉 Warm Birthday Wishes! Dear gemunu, wishing you a very Happy Birthday from all of us at Human Resources! May your year ahead be filled with success, health, and happiness. 🎂✨",
+          "status": "Delivered",
+          "cost": "3",
+          "sms_count": 3
+        }
+      },
+      "createdAt": "2026-07-29T05:15:31.818Z"
+    },
+    {
+      "id": "log_1785301878693651",
+      "contactId": "c_1785301819399",
+      "contactName": "Manodya",
+      "phone": "94788620859",
+      "department": "IT Department ",
+      "message": "🎉 Warm Birthday Wishes! Dear Manodya, wishing you a very Happy Birthday from all of us at IT Department ! May your year ahead be filled with success, health, and happiness. 🎂✨",
+      "targetDate": "2027-03-09",
+      "scheduledTime": "2027-03-09 09:00",
+      "status": "Failed",
+      "response": {
+        "status": false,
+        "message": "timeout of 15000ms exceeded",
+        "error": "timeout of 15000ms exceeded"
+      },
+      "createdAt": "2026-07-29T05:11:18.693Z"
+    },
+    {
+      "id": "log_1785301553679ucc",
+      "contactId": "c_2",
+      "contactName": "Nimali Perera",
+      "phone": "94719876543",
+      "department": "Marketing",
+      "message": "🎉 Warm Birthday Wishes! Dear Nimali Perera, wishing you a very Happy Birthday from all of us at Marketing! May your year ahead be filled with success, health, and happiness. 🎂✨",
+      "targetDate": "2027-07-28",
+      "scheduledTime": "2027-07-28 09:00",
+      "status": "Scheduled",
+      "response": {
+        "status": true,
+        "message": "Your message was successfully delivered",
+        "data": {
+          "uid": "6a698a31884d9",
+          "to": "94719876543",
+          "from": "TextLKDemo",
+          "message": "🎉 Warm Birthday Wishes! Dear Nimali Perera, wishing you a very Happy Birthday from all of us at Marketing! May your year ahead be filled with success, health, and happiness. 🎂✨",
+          "status": "Delivered",
+          "cost": "3",
+          "sms_count": 3
+        }
+      },
+      "createdAt": "2026-07-29T05:05:53.679Z"
+    },
     {
       "id": "log_1785171334194gwp",
       "contactId": "c_3",
@@ -112,5 +196,6 @@
       },
       "createdAt": "2026-07-27T16:55:34.190Z"
     }
-  ]
+  ],
+  "customLists": []
 }

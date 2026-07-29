@@ -120,8 +120,28 @@ export default function TemplateEditor({ state, onRefreshState }) {
     .replace(/<<\s*Department\s*>>/gi, previewContact.department || 'Engineering')
     .replace(/<<\s*Designation\s*>>/gi, previewContact.designation || 'Software Developer');
 
+  const isUnicode = (text) => {
+    const gsm7Regexp = /^[A-Za-z0-9\s!"#\$%&'\(\)\*\+\,\-\.\/:;<=>\?@\[\\\]\^_`\{\|\}\~¡£¤¥§¿ÄÅÆÇÉÑÖØÜßàäåæçèéìíñòóùúüòöøùü]*$/;
+    return !gsm7Regexp.test(text);
+  };
+
+  const getSmsCount = (text) => {
+    if (!text) return 0;
+    const unicode = isUnicode(text);
+    const len = text.length;
+    if (unicode) {
+      return len <= 70 ? 1 : Math.ceil(len / 67);
+    } else {
+      return len <= 160 ? 1 : Math.ceil(len / 153);
+    }
+  };
+
+  const smsRate = state?.settings?.smsRate !== undefined ? state.settings.smsRate : 2.0;
+  const isMsgUnicode = isUnicode(templateText);
+  const smsCount = getSmsCount(templateText);
+  const estimatedCost = templateText.trim() ? (smsCount * smsRate) : 0;
+
   const charLength = templateText.length;
-  const smsCount = Math.ceil(charLength / 160) || 1;
 
   return (
     <div className="space-y-6">
@@ -184,10 +204,11 @@ export default function TemplateEditor({ state, onRefreshState }) {
               <label className="block text-xs font-bold text-slate-300">
                 Message Body (Supports <span className="text-pink-400 font-mono">&lt;&lt;Tokens&gt;&gt;</span>)
               </label>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-slate-400 font-mono">Length: <strong className="text-white">{charLength}</strong> chars</span>
+              <div className="flex flex-wrap items-center gap-3 text-xs">
+                <span className="text-slate-400 font-mono">Length: <strong className="text-white">{charLength}</strong> chars ({isMsgUnicode ? 'Unicode' : 'GSM-7'})</span>
+                <span className="text-slate-400 font-mono">Rate: <strong className="text-slate-300">LKR {smsRate.toFixed(2)}</strong></span>
                 <span className={`font-semibold px-2 py-0.5 rounded-md ${smsCount > 1 ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'}`}>
-                  {smsCount} SMS {smsCount > 1 ? 'Credits' : 'Credit'}
+                  {smsCount} SMS (LKR {estimatedCost.toFixed(2)})
                 </span>
               </div>
             </div>
@@ -290,11 +311,20 @@ export default function TemplateEditor({ state, onRefreshState }) {
 
             {/* Message Bubble */}
             <div className="p-3.5 rounded-2xl bg-slate-800/90 border border-slate-700/80 text-xs text-slate-100 font-sans leading-relaxed shadow-inner space-y-2">
-              <p className="whitespace-pre-wrap">{renderedPreview}</p>
+              <p 
+                className="whitespace-pre-wrap"
+                style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+              >
+                {renderedPreview}
+              </p>
             </div>
 
-            <div className="text-right text-[10px] text-slate-500">
-              Estimated SMS Parts: <strong className="text-slate-300">{smsCount}</strong> ({renderedPreview.length} characters)
+            <div className="flex items-center justify-between text-[10px] text-slate-500">
+              <span>{isUnicode(renderedPreview) ? 'Unicode Message' : 'Standard SMS'}</span>
+              <span>
+                Parts: <strong className="text-slate-300">{getSmsCount(renderedPreview)}</strong> ({renderedPreview.length} chars) 
+                &middot; Cost: <strong className="text-slate-300">LKR {templateText.trim() ? (getSmsCount(renderedPreview) * smsRate).toFixed(2) : '0.00'}</strong>
+              </span>
             </div>
           </div>
 

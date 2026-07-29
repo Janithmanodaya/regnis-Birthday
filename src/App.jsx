@@ -5,7 +5,8 @@ import ExcelManager from './components/ExcelManager';
 import TemplateEditor from './components/TemplateEditor';
 import ScheduleManager from './components/ScheduleManager';
 import ApiSettings from './components/ApiSettings';
-import { LayoutDashboard, FileSpreadsheet, Sparkles, Clock, Settings, RefreshCw } from 'lucide-react';
+import BulkMessenger from './components/BulkMessenger';
+import { LayoutDashboard, FileSpreadsheet, Sparkles, Clock, Settings, RefreshCw, SendHorizontal } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -13,15 +14,32 @@ export default function App() {
     contacts: [],
     wishTemplate: '',
     settings: {},
-    logs: []
+    logs: [],
+    customLists: []
   });
   const [loading, setLoading] = useState(true);
+  const [balanceInfo, setBalanceInfo] = useState({ loading: true, balance: null, expiredOn: null, error: null });
+
+  const fetchBalance = async () => {
+    try {
+      const res = await fetch('/api/balance');
+      const data = await res.json();
+      if (data.success) {
+        setBalanceInfo({ loading: false, balance: data.balance, expiredOn: data.expiredOn, error: null });
+      } else {
+        setBalanceInfo({ loading: false, balance: null, expiredOn: null, error: data.error });
+      }
+    } catch (err) {
+      setBalanceInfo({ loading: false, balance: null, expiredOn: null, error: err.message });
+    }
+  };
 
   const fetchState = async () => {
     try {
       const res = await fetch('/api/state');
       const data = await res.json();
       setState(data);
+      fetchBalance();
     } catch (err) {
       console.error('Error fetching state:', err);
     } finally {
@@ -36,6 +54,7 @@ export default function App() {
   const navItems = [
     { id: 'dashboard', label: 'Overview Dashboard', icon: LayoutDashboard },
     { id: 'excel', label: 'Excel Import & Data', icon: FileSpreadsheet, badge: state.contacts?.length },
+    { id: 'bulk', label: 'Bulk Messenger', icon: SendHorizontal },
     { id: 'template', label: 'Wish Template Editor', icon: Sparkles },
     { id: 'schedule', label: 'Schedule & Queue', icon: Clock, badge: state.logs?.filter(l => l.status === 'Scheduled')?.length },
     { id: 'api', label: 'Gateway Settings', icon: Settings }
@@ -45,7 +64,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-pink-500 selection:text-white">
       
       {/* Header Bar */}
-      <Header state={state} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Header state={state} activeTab={activeTab} setActiveTab={setActiveTab} balanceInfo={balanceInfo} />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -99,6 +118,7 @@ export default function App() {
           <div>
             {activeTab === 'dashboard' && <Dashboard state={state} setActiveTab={setActiveTab} onRefreshState={fetchState} />}
             {activeTab === 'excel' && <ExcelManager state={state} onRefreshState={fetchState} />}
+            {activeTab === 'bulk' && <BulkMessenger state={state} onRefreshState={fetchState} />}
             {activeTab === 'template' && <TemplateEditor state={state} onRefreshState={fetchState} />}
             {activeTab === 'schedule' && <ScheduleManager state={state} onRefreshState={fetchState} />}
             {activeTab === 'api' && <ApiSettings state={state} onRefreshState={fetchState} />}

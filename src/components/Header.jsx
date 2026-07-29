@@ -1,7 +1,7 @@
 import React from 'react';
-import { Cake, Send, ShieldCheck, Clock, Layers, Sparkles } from 'lucide-react';
+import { Cake, Send, ShieldCheck, Clock, Layers, Sparkles, Coins } from 'lucide-react';
 
-export default function Header({ state, activeTab, setActiveTab }) {
+export default function Header({ state, activeTab, setActiveTab, balanceInfo }) {
   const settings = state?.settings || {};
   const contactsCount = state?.contacts?.length || 0;
   const logsCount = state?.logs?.length || 0;
@@ -43,6 +43,28 @@ export default function Header({ state, activeTab, setActiveTab }) {
             <span className="text-slate-400">Send Time:</span>
             <span className="font-semibold text-white">{settings.sendTime || '09:00'}</span>
           </div>
+
+          {/* Balance Pill */}
+          {balanceInfo && (
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${
+              balanceInfo.loading 
+                ? 'bg-slate-800/40 text-slate-400 border-slate-700/50' 
+                : balanceInfo.error 
+                  ? 'bg-rose-500/10 text-rose-300 border-rose-500/30' 
+                  : 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30'
+            }`} title={balanceInfo.expiredOn ? `Expires on: ${balanceInfo.expiredOn}` : 'Credit balance'}>
+              <Coins className="w-3.5 h-3.5 text-indigo-400 animate-spin-slow" />
+              <span>
+                {balanceInfo.loading ? (
+                  'Syncing Credits...'
+                ) : balanceInfo.error ? (
+                  'Credit Sync Error'
+                ) : (
+                  `Credit: LKR ${parseFloat(balanceInfo.balance || 0).toFixed(2)}`
+                )}
+              </span>
+            </div>
+          )}
 
           {/* Mode Status Pill */}
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors ${

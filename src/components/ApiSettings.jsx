@@ -9,7 +9,8 @@ export default function ApiSettings({ state, onRefreshState }) {
     senderId: currentSettings.senderId || 'TextLKDemo',
     authMethod: currentSettings.authMethod || 'oauth',
     sendTime: currentSettings.sendTime || '09:00',
-    simulationMode: currentSettings.simulationMode !== undefined ? currentSettings.simulationMode : true
+    simulationMode: currentSettings.simulationMode !== undefined ? currentSettings.simulationMode : true,
+    smsRate: currentSettings.smsRate !== undefined ? currentSettings.smsRate : 2.0
   });
 
   const [saving, setSaving] = useState(false);
@@ -140,6 +141,24 @@ export default function ApiSettings({ state, onRefreshState }) {
                 placeholder="e.g. TextLKDemo or YourBrand"
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-sky-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                SMS Unit Cost / Rate (LKR per SMS Part)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={form.smsRate}
+                onChange={(e) => setForm({ ...form, smsRate: parseFloat(e.target.value) || 0 })}
+                placeholder="e.g. 2.00"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-sky-500"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                Used to compute real-time campaign costs for templates and bulk SMS.
+              </p>
             </div>
 
             {/* Auth Method Selector */}

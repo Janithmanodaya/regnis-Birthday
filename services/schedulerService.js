@@ -60,6 +60,13 @@ export class SchedulerService {
     return rendered;
   }
 
+  static getLocalDateString(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
   /**
    * Scans store for today's birthdays and schedules dispatches if not already scheduled today
    */
@@ -71,7 +78,7 @@ export class SchedulerService {
 
     const today = new Date();
     const todayMonthDay = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    const todayYYYYMMDD = today.toISOString().split('T')[0];
+    const todayYYYYMMDD = SchedulerService.getLocalDateString(today);
 
     const sendTimeSetting = settings.sendTime || '09:00'; // e.g. "09:00"
     const [sendHour, sendMinute] = sendTimeSetting.split(':').map(Number);
@@ -89,54 +96,61 @@ export class SchedulerService {
       }
 
       if (bdayMonthDay === todayMonthDay) {
-        // Check if SMS already scheduled or sent for this contact today
+        // Check if SMS already sent or failed for this contact today
         const existingLog = data.logs.find(log => 
           log.contactId === contact.id && log.targetDate === todayYYYYMMDD
         );
 
-        if (!existingLog) {
-          // Render SMS message
-          const messageText = SchedulerService.renderTemplate(wishTemplate, contact);
+        // We process it if:
+        // 1. No log exists yet.
+        // 2. Or a log exists with status "Scheduled" (meaning it is queued to go today).
+        const shouldSend = !existingLog || existingLog.status === 'Scheduled';
 
-          // Construct Text.lk schedule timestamp format (Y-m-d H:i)
+        if (shouldSend) {
+          // Construct target dispatch time for today
           const targetTime = new Date(today);
           targetTime.setHours(sendHour, sendMinute, 0, 0);
 
-          const isPastTimeToday = today > targetTime;
-          let scheduleTimeStr = null;
+          // We only send if current local time is >= target time
+          if (today >= targetTime) {
+            // Render SMS message
+            const messageText = SchedulerService.renderTemplate(wishTemplate, contact);
 
-          if (!isPastTimeToday) {
-            scheduleTimeStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')} ${String(sendHour).padStart(2, '0')}:${String(sendMinute).padStart(2, '0')}`;
+            console.log(`🎂 Today is ${contact.name}'s birthday! Dispatching SMS...`);
+
+            const sendResult = await TextLKService.sendSMS({
+              apiToken: settings.apiToken,
+              senderId: settings.senderId,
+              recipient: contact.phone,
+              message: messageText,
+              scheduleTime: null, // Send immediately now that the actual scheduled day has arrived
+              authMethod: settings.authMethod || 'oauth',
+              simulationMode: settings.simulationMode
+            });
+
+            // Update or create log entry
+            if (existingLog) {
+              existingLog.status = sendResult.status ? 'Sent' : 'Failed';
+              existingLog.response = sendResult;
+              existingLog.createdAt = new Date().toISOString();
+              this.store.save();
+            } else {
+              const newLog = {
+                id: 'log_' + Date.now() + Math.random().toString(36).substring(2, 5),
+                contactId: contact.id,
+                contactName: contact.name,
+                phone: contact.phone,
+                department: contact.department,
+                message: messageText,
+                targetDate: todayYYYYMMDD,
+                scheduledTime: 'Immediate',
+                status: sendResult.status ? 'Sent' : 'Failed',
+                response: sendResult,
+                createdAt: new Date().toISOString()
+              };
+              this.store.addLog(newLog);
+            }
           }
-
-          console.log(`🎂 Today is ${contact.name}'s birthday! Preparing SMS...`);
-
-          const sendResult = await TextLKService.sendSMS({
-            apiToken: settings.apiToken,
-            senderId: settings.senderId,
-            recipient: contact.phone,
-            message: messageText,
-            scheduleTime: scheduleTimeStr,
-            authMethod: settings.authMethod || 'oauth',
-            simulationMode: settings.simulationMode
-          });
-
-          // Log entry
-          const newLog = {
-            id: 'log_' + Date.now() + Math.random().toString(36).substring(2, 5),
-            contactId: contact.id,
-            contactName: contact.name,
-            phone: contact.phone,
-            department: contact.department,
-            message: messageText,
-            targetDate: todayYYYYMMDD,
-            scheduledTime: scheduleTimeStr || 'Immediate',
-            status: sendResult.status ? (scheduleTimeStr ? 'Scheduled' : 'Sent') : 'Failed',
-            response: sendResult,
-            createdAt: new Date().toISOString()
-          };
-
-          this.store.addLog(newLog);
         }
       }
     }
@@ -183,7 +197,7 @@ export class SchedulerService {
         targetDate = new Date(`${currentYear + 1}-${month}-${day}T${sendTimeSetting}:00`);
       }
 
-      const targetYYYYMMDD = targetDate.toISOString().split('T')[0];
+      const targetYYYYMMDD = SchedulerService.getLocalDateString(targetDate);
       const scheduleTimeStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')} ${sendTimeSetting}`;
 
       // Check if already in queue
@@ -192,16 +206,7 @@ export class SchedulerService {
 
       const messageText = SchedulerService.renderTemplate(wishTemplate, contact);
 
-      const sendResult = await TextLKService.sendSMS({
-        apiToken: settings.apiToken,
-        senderId: settings.senderId,
-        recipient: contact.phone,
-        message: messageText,
-        scheduleTime: scheduleTimeStr,
-        authMethod: settings.authMethod || 'oauth',
-        simulationMode: settings.simulationMode
-      });
-
+      // Add local log entry with status "Scheduled" (WITHOUT calling Text.lk API pre-emptively!)
       const logEntry = {
         id: 'log_' + Date.now() + Math.random().toString(36).substring(2, 5),
         contactId: contact.id,
@@ -211,8 +216,11 @@ export class SchedulerService {
         message: messageText,
         targetDate: targetYYYYMMDD,
         scheduledTime: scheduleTimeStr,
-        status: sendResult.status ? 'Scheduled' : 'Failed',
-        response: sendResult,
+        status: 'Scheduled',
+        response: {
+          status: true,
+          message: 'Locally scheduled for upcoming birthday'
+        },
         createdAt: new Date().toISOString()
       };
 

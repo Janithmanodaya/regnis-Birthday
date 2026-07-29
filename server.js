@@ -4,6 +4,7 @@ import multer from 'multer';
 import * as XLSX from 'xlsx';
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 import { Store } from './services/store.js';
 import { TextLKService } from './services/textlkService.js';
 import { SchedulerService } from './services/schedulerService.js';
@@ -295,6 +296,153 @@ app.post('/api/sms/test', async (req, res) => {
   });
 
   res.json(result);
+});
+
+/**
+ * 6.0 Get Text.lk Balance
+ */
+app.get('/api/balance', async (req, res) => {
+  const state = store.get();
+  const settings = state.settings;
+
+  if (settings.simulationMode || !settings.apiToken) {
+    return res.json({
+      success: true,
+      simulated: true,
+      balance: '100.00',
+      expiredOn: 'N/A (Simulation)'
+    });
+  }
+
+  try {
+    const response = await axios.get('https://app.text.lk/api/v3/balance', {
+      headers: {
+        'Authorization': `Bearer ${settings.apiToken}`,
+        'Accept': 'application/json'
+      },
+      timeout: 10000
+    });
+    
+    if (response.data && response.data.status === 'success') {
+      res.json({
+        success: true,
+        balance: response.data.data.remaining_balance,
+        expiredOn: response.data.data.expired_on
+      });
+    } else {
+      res.json({
+        success: false,
+        error: response.data?.message || 'Failed to fetch balance'
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching balance from Text.lk:', error.message);
+    res.json({
+      success: false,
+      error: error.response?.data?.message || error.message
+    });
+  }
+});
+
+/**
+ * 6.1 Get Custom Lists
+ */
+app.get('/api/lists', (req, res) => {
+  res.json(store.get().customLists || []);
+});
+
+/**
+ * 6.2 Create or Update Custom List
+ */
+app.post('/api/lists', (req, res) => {
+  const { id, name, description, contactIds } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: 'List name is required.' });
+  }
+  const lists = store.get().customLists || [];
+  if (id) {
+    const idx = lists.findIndex(l => l.id === id);
+    if (idx !== -1) {
+      lists[idx] = { id, name, description: description || '', contactIds: contactIds || [] };
+    } else {
+      return res.status(404).json({ error: 'List not found.' });
+    }
+  } else {
+    const newList = {
+      id: 'list_' + Date.now(),
+      name,
+      description: description || '',
+      contactIds: contactIds || []
+    };
+    lists.push(newList);
+  }
+  store.setCustomLists(lists);
+  res.json({ success: true, lists });
+});
+
+/**
+ * 6.3 Delete Custom List
+ */
+app.delete('/api/lists/:id', (req, res) => {
+  const { id } = req.params;
+  const lists = store.get().customLists || [];
+  const filtered = lists.filter(l => l.id !== id);
+  store.setCustomLists(filtered);
+  res.json({ success: true, lists: filtered });
+});
+
+/**
+ * 6.4 Send Bulk SMS
+ */
+app.post('/api/sms/bulk', async (req, res) => {
+  const { recipients, message } = req.body;
+  if (!recipients || !Array.isArray(recipients) || recipients.length === 0) {
+    return res.status(400).json({ error: 'Recipients array is required.' });
+  }
+  if (!message) {
+    return res.status(400).json({ error: 'Message content is required.' });
+  }
+
+  const state = store.get();
+  const settings = state.settings;
+  const results = [];
+
+  for (const contact of recipients) {
+    const renderedMessage = SchedulerService.renderTemplate(message, contact);
+    const sendResult = await TextLKService.sendSMS({
+      apiToken: settings.apiToken,
+      senderId: settings.senderId,
+      recipient: contact.phone,
+      message: renderedMessage,
+      authMethod: settings.authMethod,
+      simulationMode: settings.simulationMode
+    });
+
+    const logEntry = {
+      id: 'log_' + Date.now() + Math.random().toString(36).substring(2, 5),
+      contactId: contact.id || 'bulk_manual',
+      contactName: contact.name,
+      phone: contact.phone,
+      department: contact.department || 'Bulk Messenger',
+      message: renderedMessage,
+      targetDate: new Date().toISOString().split('T')[0],
+      scheduledTime: 'Immediate (Bulk)',
+      status: sendResult.status ? 'Sent' : 'Failed',
+      response: sendResult,
+      createdAt: new Date().toISOString()
+    };
+    store.addLog(logEntry);
+
+    results.push({
+      contactId: contact.id,
+      name: contact.name,
+      phone: contact.phone,
+      status: sendResult.status ? 'Sent' : 'Failed',
+      message: sendResult.message
+    });
+  }
+
+  res.json({ success: true, results });
 });
 
 /**
